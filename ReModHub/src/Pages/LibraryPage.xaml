@@ -1,0 +1,24 @@
+<Page x:Class="ReModHub.Pages.LibraryPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:local="clr-namespace:ReModHub.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="750" d:DesignWidth="1000"
+      Title="ライブラリ">
+
+    <Grid>
+        <TabControl x:Name="LibraryTabView" 
+                    SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}"
+                    SelectionChanged="OnTabSelectionChanged">
+            <TabItem Header="ゲーム">
+                <Frame x:Name="GameLibraryFrame" NavigationUIVisibility="Hidden"/>
+            </TabItem>
+            <TabItem Header="MOD">
+                <Frame x:Name="ModLibraryFrame" NavigationUIVisibility="Hidden"/>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>

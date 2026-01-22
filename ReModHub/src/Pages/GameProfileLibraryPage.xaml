@@ -1,0 +1,23 @@
+﻿<Page x:Class="ReModHub.Pages.GameProfileLibraryPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ReModHub.Pages"
+      xmlns:controls="clr-namespace:ReModHub.Controls"
+      mc:Ignorable="d" 
+      d:DesignHeight="750" d:DesignWidth="1000"
+      Title="GameProfileLibraryPage">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="250"/>
+            <ColumnDefinition MinWidth="750"/>
+        </Grid.ColumnDefinitions>
+        <controls:GameProfileListControl ItemsSource="{Binding GameProfileListItems}" 
+                                         Margin="5"
+                                         Grid.Column="0"/>
+        <controls:GameProfileDetailsControl x:Name="GameProfileDetails" 
+                                            Grid.Column="1"/>
+    </Grid>
+</Page>

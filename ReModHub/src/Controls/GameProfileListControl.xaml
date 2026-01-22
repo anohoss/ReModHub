@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="ReModHub.Controls.GameProfileListControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ReModHub.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="804.808" d:DesignWidth="319.712">
+    <Grid>
+        <ListBox ItemsSource="{Binding Items, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:GameProfileListControl}}"
+                 Margin="10" 
+                 Background="{DynamicResource BackgroundBrush}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" FontSize="{DynamicResource FontSizeMedium}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>
