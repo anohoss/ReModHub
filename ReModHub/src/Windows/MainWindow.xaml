@@ -6,42 +6,46 @@
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:local="clr-namespace:ReModHub.Windows"
         xmlns:pages="clr-namespace:ReModHub.Pages"
+        xmlns:resources="clr-namespace:ReModHub.Resources"
         mc:Ignorable="d"
         Title="ReMod Hub" 
         MinHeight="750" MinWidth="1250"
         ExtendsContentIntoTitleBar="True"
-        WindowBackdropType="Mica"
-        WindowStartupLocation="CenterScreen">
-    
+        WindowBackdropType="Auto"
+        WindowStartupLocation="CenterScreen"
+        Background="{ui:ThemeResource ApplicationBackgroundBrush}">
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="30" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar x:Name="AppTitleBar"
-                     Grid.Row="0"
-                     Title="{Binding Title, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
+        <ui:TitleBar Grid.Row="0"
                      ShowMinimize="True"
                      ShowMaximize="True"
                      ShowClose="True" />
 
-        <ui:NavigationView x:Name="RootNavigation"
-                           Grid.Row="1"
-                           PaneDisplayMode="Left"
-                           IsPaneOpen="True"
-                           IsBackButtonVisible="Collapsed"
-                           TitleBar="{Binding ElementName=AppTitleBar}">
-            <ui:NavigationView.MenuItems>
-                <ui:NavigationViewItem 
-                    TargetPageType="{x:Type pages:HomePage}"
-                    Content="ホーム"
-                    Icon="{ui:SymbolIcon Home24}"/>
-                <ui:NavigationViewItem 
-                    TargetPageType="{x:Type pages:LibraryPage}"
-                    Content="ライブラリ"
-                    Icon="{ui:SymbolIcon Library24}"/>
-            </ui:NavigationView.MenuItems>
-        </ui:NavigationView>
+        <Grid Grid.Row="1">
+            <ui:NavigationView x:Name="RootNavigation"
+                               PaneDisplayMode="Left"
+                               IsPaneOpen="True"
+                               IsBackButtonVisible="Collapsed">
+                <ui:NavigationView.MenuItems>
+                    <ui:NavigationViewItem 
+                        TargetPageType="{x:Type pages:HomePage}"
+                        Content="ホーム"
+                        Icon="{ui:SymbolIcon Home24}"/>
+                    <ui:NavigationViewItem 
+                        TargetPageType="{x:Type pages:LibraryPage}"
+                        Content="ライブラリ"
+                        Icon="{ui:SymbolIcon Library24}"/>
+                    <ui:NavigationViewItem
+                        TargetPageType="{x:Type pages:SettingsPage}"
+                        Content="設定"
+                        Icon="{ui:SymbolIcon Settings24}"/>
+                </ui:NavigationView.MenuItems>
+            </ui:NavigationView>
+        </Grid>
     </Grid>
 </ui:FluentWindow>

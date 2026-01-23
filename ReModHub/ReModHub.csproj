@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-	<!-- GenericHost を利用してアプリケーションを起動するため、Main 関数の自動生成を無効化 -->
-	<EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+	<!-- App.xaml の Startup を使用するため、Main 自動生成を有効化 -->
+	<EnableDefaultApplicationDefinition>true</EnableDefaultApplicationDefinition>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ApplicationDefinition Include="src\App.xaml" />
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

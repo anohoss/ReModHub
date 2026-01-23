@@ -9,7 +9,7 @@
       d:DesignHeight="750" d:DesignWidth="1000"
       Title="ライブラリ">
 
-    <Grid>
+    <Grid Background="{ui:ThemeResource SolidBackgroundFillColorBaseBrush}">
         <TabControl x:Name="LibraryTabView" 
                     SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}"
                     SelectionChanged="OnTabSelectionChanged">

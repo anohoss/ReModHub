@@ -1,6 +1,7 @@
-﻿using System.Windows;
-using System.Windows.Controls;
 using ReModHub.Pages;
+using Wpf.Ui;
+using Wpf.Ui.Abstractions;
+using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
 namespace ReModHub.Windows
@@ -8,30 +9,32 @@ namespace ReModHub.Windows
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : FluentWindow, Wpf.Ui.INavigationWindow
+    public partial class MainWindow : FluentWindow, INavigationWindow
     {
         private bool _isInitialized;
 
         public MainWindow(
-            MainWindowViewModel viewModel,
-            Wpf.Ui.Abstractions.INavigationViewPageProvider pageService,
-            Wpf.Ui.INavigationService navigationService)
+            INavigationViewPageProvider pageService,
+            INavigationService navigationService)
         {
-            DataContext = viewModel;
             InitializeComponent();
-            Wpf.Ui.Appearance.ApplicationThemeManager.Apply(this);
+
+            ApplicationThemeManager.Apply(this);
 
             RootNavigation.SetPageProviderService(pageService);
             navigationService.SetNavigationControl(RootNavigation);
 
-            Loaded += (_, _) => InitializeNavigation();
+            Loaded += (_, _) =>
+            {
+                InitializeNavigation();
+            };
         }
 
-        public Wpf.Ui.Controls.INavigationView GetNavigation() => RootNavigation;
+        public INavigationView GetNavigation() => RootNavigation;
 
         public bool Navigate(Type pageType) => RootNavigation.Navigate(pageType);
 
-        public void SetPageService(Wpf.Ui.Abstractions.INavigationViewPageProvider pageService)
+        public void SetPageService(INavigationViewPageProvider pageService)
         {
             RootNavigation.SetPageProviderService(pageService);
         }

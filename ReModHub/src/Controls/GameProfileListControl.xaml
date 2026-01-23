@@ -4,16 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ReModHub.Controls"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d" 
              d:DesignHeight="804.808" d:DesignWidth="319.712">
     <Grid>
         <ListBox ItemsSource="{Binding Items, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:GameProfileListControl}}"
                  Margin="10" 
-                 Background="{DynamicResource BackgroundBrush}">
+                 Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                 BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                 BorderThickness="1">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" FontSize="{DynamicResource FontSizeMedium}" />
+                        <TextBlock
+                            Text="{Binding DisplayName}"
+                            FontWeight="Bold"
+                            FontSize="{DynamicResource FontSizeMedium}"
+                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

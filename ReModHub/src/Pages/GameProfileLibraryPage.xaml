@@ -5,11 +5,12 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ReModHub.Pages"
       xmlns:controls="clr-namespace:ReModHub.Controls"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d" 
       d:DesignHeight="750" d:DesignWidth="1000"
       Title="GameProfileLibraryPage">
 
-    <Grid>
+    <Grid Background="{ui:ThemeResource SolidBackgroundFillColorBaseBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="250"/>
             <ColumnDefinition MinWidth="750"/>
