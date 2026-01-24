@@ -13,7 +13,8 @@
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Auto"
         WindowStartupLocation="CenterScreen"
-        Background="{ui:ThemeResource ApplicationBackgroundBrush}">
+        Background="{ui:ThemeResource ApplicationBackgroundBrush}"
+        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}">
 
     <Grid>
         <Grid.RowDefinitions>

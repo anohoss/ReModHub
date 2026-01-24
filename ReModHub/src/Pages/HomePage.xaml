@@ -16,6 +16,7 @@
             <ui:TextBlock 
                 Text="ReMod Hub へようこそ" 
                 FontTypography="TitleLarge"
+                Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                 HorizontalAlignment="Center"/>
             <ui:TextBlock 
                 Text="サイドバーからライブラリにアクセスしてください" 

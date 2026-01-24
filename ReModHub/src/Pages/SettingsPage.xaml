@@ -24,6 +24,7 @@
                     <ui:TextBlock
                         Grid.Row="0"
                         FontTypography="Body"
+                        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                         Text="アプリのテーマ" />
                     <ui:TextBlock
                         Grid.Row="1"

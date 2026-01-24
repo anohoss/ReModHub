@@ -1,7 +1,6 @@
 using ReModHub.Pages;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions;
-using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
 namespace ReModHub.Windows
@@ -18,8 +17,6 @@ namespace ReModHub.Windows
             INavigationService navigationService)
         {
             InitializeComponent();
-
-            ApplicationThemeManager.Apply(this);
 
             RootNavigation.SetPageProviderService(pageService);
             navigationService.SetNavigationControl(RootNavigation);
