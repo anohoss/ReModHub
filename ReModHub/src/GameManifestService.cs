@@ -49,7 +49,7 @@ namespace ReModHub
 
         private async Task LoadGameManifestsAsync(CancellationToken cancellationToken)
         {
-            string gamesRootDirectoryName = AppPath.GameDirectoryName;
+            string gamesRootDirectoryName = AppPath.GamesDirectoryName;
 
             if (!Directory.Exists(gamesRootDirectoryName))
             {

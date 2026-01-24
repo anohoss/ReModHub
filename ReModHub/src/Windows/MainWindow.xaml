@@ -6,7 +6,6 @@
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:local="clr-namespace:ReModHub.Windows"
         xmlns:pages="clr-namespace:ReModHub.Pages"
-        xmlns:resources="clr-namespace:ReModHub.Resources"
         mc:Ignorable="d"
         Title="ReMod Hub" 
         MinHeight="750" MinWidth="1250"

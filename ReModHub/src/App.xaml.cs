@@ -34,7 +34,6 @@ namespace ReModHub
                     });
                 });
 
-                services.AddSingleton<GameManifestService>();
                 services.AddSingleton<IThemeCoordinator, ThemeCoordinator>();
                 services.AddSingleton<IAppSettingsStore>(_ => new JsonAppSettingsStore("ReModHub"));
 
@@ -42,11 +41,12 @@ namespace ReModHub
                 services.AddNavigationViewPageProvider();
                 services.AddSingleton<Wpf.Ui.INavigationService, Wpf.Ui.NavigationService>();
 
+                services.AddSingleton<ModManifestService>();
+                services.AddSingleton<GameManifestService>();
+                services.AddSingleton<GameProfileService>();
+
                 // Pages
                 services.AddSingleton<HomePage>();
-                services.AddTransient<GameProfileLibraryPageViewModelBase, GameProfileLibraryPageViewModel>();
-                services.AddSingleton<GameProfileLibraryPage>();
-                services.AddSingleton<ModLibraryPage>();
                 services.AddTransient<LibraryPageViewModelBase, LibraryPageViewModel>();
                 services.AddSingleton<LibraryPage>();
                 services.AddTransient<SettingsPageViewModel>();

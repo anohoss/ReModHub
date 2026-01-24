@@ -7,14 +7,13 @@ namespace ReModHub
 {
     internal class ModManifestService
     {
-        private const string ManifestFileName = "manifest.json";
+        private ILogger<ModManifestService> Logger { get; init; }
 
-        private readonly ILogger<ModManifestService> logger;
         private readonly Dictionary<string, ModManifest> idToManifest = [];
 
         public ModManifestService(ILogger<ModManifestService> logger)
         {
-            this.logger = logger;
+            Logger = logger;
         }
 
         public bool FindModManifest(ModManifestReference reference, out ModManifest? manifest)
@@ -25,27 +24,35 @@ namespace ReModHub
         public async Task RefreshModManifestsAsync(CancellationToken cancellationToken)
         {
             idToManifest.Clear();
-            await LoadModManifestsAsync(cancellationToken);
+            await LoadManifestsAsync(cancellationToken);
         }
 
-        private async Task LoadModManifestsAsync(CancellationToken cancellationToken)
+        public void PopulateModManifests(List<ModManifest> results)
         {
-            string modRootDirectoryName = AppPath.ModDirectoryName;
-
-            if (!Directory.Exists(modRootDirectoryName))
+            foreach (var manifest in idToManifest.Values)
             {
-                logger.ZLogWarning($"Directory: '{modRootDirectoryName}' not found");
+                results.Add(manifest);
+            }
+        }
+
+        private async Task LoadManifestsAsync(CancellationToken cancellationToken)
+        {
+            string RootDirName = AppPath.ModsDirectoryName;
+
+            if (!Directory.Exists(RootDirName))
+            {
+                Logger.ZLogWarning($"Directory: '{RootDirName}' not found");
                 return;
             }
 
-            var modDirectoryNames = Directory.GetDirectories(modRootDirectoryName);
+            var modDirNames = Directory.GetDirectories(RootDirName);
 
-            for (int i = 0; i < modDirectoryNames.Length; i++)
+            for (int i = 0; i < modDirNames.Length; i++)
             {
-                var modDirName = modDirectoryNames[i];
-                string manifestFilePath = Path.Combine(modDirName, ManifestFileName);
+                var modDirName = modDirNames[i];
+                var manifestFilePath = MakeManifestFilePath(modDirName);
 
-                var manifest = await LoadModManifestAsync(manifestFilePath, cancellationToken);
+                var manifest = await LoadManifestAsync(manifestFilePath, cancellationToken);
                 if (manifest != null)
                 {
                     string modId = Path.GetFileName(modDirName) ?? string.Empty;
@@ -53,14 +60,29 @@ namespace ReModHub
                 }
             }
 
-            logger.ZLogDebug($"Successfully loaded {idToManifest.Count} mod manifests");
+            Logger.ZLogDebug($"Successfully loaded {idToManifest.Count} mod manifests");
         }
 
-        private async Task<ModManifest?> LoadModManifestAsync(string manifestFilePath, CancellationToken cancellationToken)
+        private string MakeManifestFilePath(string modDirPath)
+        {
+            const string ManifestExtension = "json";
+            string modDirName = Path.GetFileName(modDirPath) ?? string.Empty;
+
+            if (string.IsNullOrEmpty(modDirName))
+            {
+                throw new ArgumentException("Mod directory path is invalid", nameof(modDirPath));
+            }
+
+            string manifestFileNameWithoutExtension = modDirName[0..modDirName.IndexOf('-')];
+            string manifestFileName = $"{manifestFileNameWithoutExtension}.{ManifestExtension}";
+            return Path.Combine(modDirPath, manifestFileName);
+        }
+
+        private async Task<ModManifest?> LoadManifestAsync(string manifestFilePath, CancellationToken cancellationToken)
         {
             if (!File.Exists(manifestFilePath))
             {
-                logger.ZLogWarning($"Manifest file not found at {manifestFilePath}");
+                Logger.ZLogWarning($"Manifest file not found at {manifestFilePath}");
                 return null;
             }
 
@@ -71,7 +93,7 @@ namespace ReModHub
 
                 if (manifest == null)
                 {
-                    logger.ZLogError($"Failed to deserialize manifest from {manifestFilePath}");
+                    Logger.ZLogError($"Failed to deserialize manifest from {manifestFilePath}");
                     return null;
                 }
 
@@ -79,7 +101,7 @@ namespace ReModHub
             }
             catch (Exception ex)
             {
-                logger.ZLogError($"Failed to load mod manifest: {ex.Message}");
+                Logger.ZLogError($"Failed to load mod manifest: {ex.Message}");
                 return null;
             }
         }

@@ -10,10 +10,10 @@ namespace ReModHub
 
         public static string LogsDirectoryName => Path.Combine(RootDirectoryName, "Logs");
 
-        public static string GameDirectoryName => Path.Combine(RootDirectoryName, "Games");
+        public static string GamesDirectoryName => Path.Combine(RootDirectoryName, "Games");
 
-        public static string GameProfileDirectoryName => Path.Combine(RootDirectoryName, "GameProfiles");
+        public static string GameProfilesDirectoryName => Path.Combine(RootDirectoryName, "GameProfiles");
 
-        public static string ModDirectoryName => Path.Combine(RootDirectoryName, "Mods");
+        public static string ModsDirectoryName => Path.Combine(RootDirectoryName, "Mods");
     }
 }

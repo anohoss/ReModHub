@@ -4,21 +4,37 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:controls="clr-namespace:ReModHub.Controls"
       xmlns:local="clr-namespace:ReModHub.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="750" d:DesignWidth="1000"
       Title="ライブラリ">
 
     <Grid Background="{ui:ThemeResource SolidBackgroundFillColorBaseBrush}">
-        <TabControl x:Name="LibraryTabView" 
-                    SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}"
-                    SelectionChanged="OnTabSelectionChanged">
-            <TabItem Header="ゲーム">
-                <Frame x:Name="GameLibraryFrame" NavigationUIVisibility="Hidden"/>
-            </TabItem>
-            <TabItem Header="MOD">
-                <Frame x:Name="ModLibraryFrame" NavigationUIVisibility="Hidden"/>
-            </TabItem>
-        </TabControl>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Games"
+                   Margin="12,12,12,6"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
+        <controls:GameProfileLibraryControl Grid.Row="1"
+                                            Margin="8,0,8,8"
+                                            ItemsSource="{Binding GameProfiles}"/>
+
+        <TextBlock Text="MOD"
+                   Grid.Row="2"
+                   Margin="12,12,12,6"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
+        <controls:ModLibraryControl Grid.Row="3"
+                                    Margin="8,0,8,12"
+                                    ItemsSource="{Binding ModManifests}"/>
     </Grid>
 </Page>
