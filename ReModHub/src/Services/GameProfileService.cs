@@ -11,12 +11,12 @@ namespace ReModHub
         {
             public string? DisplayName { get; set; } = string.Empty;
             public string? VersionName { get; set; } = string.Empty;
-            public GameManifestReference? BaseGameReference { get; set; } = null;
+            public GameReference? BaseGameReference { get; set; } = null;
             public ModManifestReference[]? ModReferences { get; set; } = null;
         }
 
         private readonly ILogger<GameProfileService> logger;
-        private readonly List<GameProfileDisplayInfo> profiles = [];
+        private readonly List<GameProfile> profiles = [];
 
         public GameProfileService(ILogger<GameProfileService> logger)
         {
@@ -29,12 +29,28 @@ namespace ReModHub
             await LoadGameProfilesAsync(cancellationToken);
         }
 
-        public void PopulateGameProfiles(List<GameProfileDisplayInfo> results)
+        public void PopulateGameProfiles(List<GameProfile> results)
         {
             for (int i = 0; i < profiles.Count; i++)
             {
                 results.Add(profiles[i]);
             }
+        }
+
+        public bool FindGameProfile(GameReference reference, out GameProfile? profile)
+        {
+            profile = null;
+
+            for (int i = 0; i < profiles.Count; i++)
+            {
+                if (profiles[i].Id == reference.Id)
+                {
+                    profile = profiles[i];
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private async Task LoadGameProfilesAsync(CancellationToken cancellationToken)
@@ -79,7 +95,7 @@ namespace ReModHub
             return AppPath.GameProfilesDirectoryName;
         }
 
-        private async Task<GameProfileDisplayInfo?> LoadGameProfileAsync(string profileFilePath, CancellationToken cancellationToken)
+        private async Task<GameProfile?> LoadGameProfileAsync(string profileFilePath, CancellationToken cancellationToken)
         {
             if (!File.Exists(profileFilePath))
             {
@@ -111,12 +127,15 @@ namespace ReModHub
                 return null;
             }
 
-            return new GameProfileDisplayInfo
+            var modReferences = profile.ModReferences ?? [];
+            return new GameProfile
             {
+                Id = $"{profile.DisplayName!.ToLower().Replace(" ", "")}-{profile.VersionName}",
                 DisplayName = profile.DisplayName,
                 VersionName = profile.VersionName,
                 BaseGameId = profile.BaseGameReference?.Id ?? string.Empty,
-                ModCount = profile.ModReferences?.Length ?? 0
+                ModReferences = modReferences,
+                ModCount = modReferences.Length
             };
         }
     }

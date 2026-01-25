@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows.Input;
+using ReModHub.Commands;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,14 +14,11 @@ namespace ReModHub.Pages
     /// </summary>
     public abstract class LibraryPageViewModelBase
     {
-        /// <summary>
-        /// 現在選択されているタブのインデックス（0=ゲーム、1=MOD）
-        /// </summary>
-        public abstract int SelectedTabIndex { get; set; }
-
-        public abstract ObservableCollection<GameProfileDisplayInfo> GameProfiles { get; }
+        public abstract ObservableCollection<GameProfile> GameProfiles { get; }
 
         public abstract ObservableCollection<ModManifest> ModManifests { get; }
+
+        public abstract ICommand LaunchGameProfileCommand { get; }
     }
 
     /// <summary>
@@ -27,40 +26,39 @@ namespace ReModHub.Pages
     /// </summary>
     internal class LibraryPageViewModel : LibraryPageViewModelBase, INotifyPropertyChanged
     {
-        private int selectedTabIndex = 0;
-
         private readonly GameProfileService gameProfileService;
-        private readonly ModManifestService modManifestService;
+        private readonly GameManifestService gameManifestService;
+        private readonly GameLauncherService gameLauncherService;
 
-        public override ObservableCollection<GameProfileDisplayInfo> GameProfiles { get; } = [];
+        public override ObservableCollection<GameProfile> GameProfiles { get; } = [];
+
+        private readonly ModManifestService modManifestService;
 
         public override ObservableCollection<ModManifest> ModManifests { get; } = [];
 
+        public override ICommand LaunchGameProfileCommand { get; }
+
         private CancellationTokenSource initializeCancellationTokenSource = new();
 
-        public override int SelectedTabIndex
-        {
-            get => selectedTabIndex;
-            set
-            {
-                if (selectedTabIndex != value)
-                {
-                    selectedTabIndex = value;
-                    OnPropertyChanged(nameof(SelectedTabIndex));
-                }
-            }
-        }
-
-        public LibraryPageViewModel(GameProfileService gameProfileService, ModManifestService modManifestService)
+        public LibraryPageViewModel(
+            GameProfileService gameProfileService,
+            GameManifestService gameManifestService,
+            ModManifestService modManifestService,
+            GameLauncherService gameLauncherService)
         {
             this.gameProfileService = gameProfileService ?? throw new ArgumentNullException(nameof(gameProfileService));
+            this.gameManifestService = gameManifestService ?? throw new ArgumentNullException(nameof(gameManifestService));
             this.modManifestService = modManifestService ?? throw new ArgumentNullException(nameof(modManifestService));
+            this.gameLauncherService = gameLauncherService ?? throw new ArgumentNullException(nameof(gameLauncherService));
+
+            LaunchGameProfileCommand = new RelayCommand<GameProfile>(LaunchGameProfileAsync);
 
             InitializeAsync(initializeCancellationTokenSource.Token).ConfigureAwait(false);
         }
 
         private async Task InitializeAsync(CancellationToken cancellationToken)
         {
+            await gameManifestService.RefreshGameManifestsAsync(cancellationToken);
             await gameProfileService.RefreshGameProfilesAsync(cancellationToken);
             await modManifestService.RefreshModManifestsAsync(cancellationToken);
 
@@ -71,7 +69,8 @@ namespace ReModHub.Pages
         private void RefreshGameProfiles()
         {
             GameProfiles.Clear();
-            var cachedProfiles = new List<GameProfileDisplayInfo>();
+
+            var cachedProfiles = new List<GameProfile>();
             gameProfileService.PopulateGameProfiles(cachedProfiles);
 
             foreach (var profile in cachedProfiles)
@@ -85,6 +84,7 @@ namespace ReModHub.Pages
         private void RefreshModManifests()
         {
             ModManifests.Clear();
+
             var cachedManifests = new List<ModManifest>();
             modManifestService.PopulateModManifests(cachedManifests);
 
@@ -94,6 +94,17 @@ namespace ReModHub.Pages
             }
 
             OnPropertyChanged(nameof(ModManifests));
+        }
+
+        private Task LaunchGameProfileAsync(GameProfile? profile)
+        {
+            if (profile == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            gameLauncherService.StartGame(profile);
+            return Task.CompletedTask;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

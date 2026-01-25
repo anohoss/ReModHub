@@ -25,7 +25,8 @@
                    Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
         <controls:GameProfileLibraryControl Grid.Row="1"
                                             Margin="8,0,8,8"
-                                            ItemsSource="{Binding GameProfiles}"/>
+                                            ItemsSource="{Binding GameProfiles}"
+                                            LaunchCommand="{Binding LaunchGameProfileCommand}"/>
 
         <TextBlock Text="MOD"
                    Grid.Row="2"

@@ -27,10 +27,16 @@
                                 Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                                 BorderThickness="1">
+                            <Border.InputBindings>
+                                <MouseBinding Gesture="LeftDoubleClick"
+                                              Command="{Binding LaunchCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:GameProfileLibraryControl}}"
+                                              CommandParameter="{Binding}" />
+                            </Border.InputBindings>
                             <StackPanel>
                                 <TextBlock Text="{Binding DisplayName}"
                                            FontSize="14"
                                            FontWeight="SemiBold"
+                                           Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                                            TextTrimming="CharacterEllipsis"/>
                                 <TextBlock Text="{Binding VersionName}"
                                            Margin="0,4,0,0"
