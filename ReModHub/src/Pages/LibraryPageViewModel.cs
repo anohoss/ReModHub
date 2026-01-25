@@ -19,6 +19,8 @@ namespace ReModHub.Pages
         public abstract ObservableCollection<ModManifest> ModManifests { get; }
 
         public abstract ICommand LaunchGameProfileCommand { get; }
+
+        public abstract Task InitializeAsync(CancellationToken cancellationToken);
     }
 
     /// <summary>
@@ -38,7 +40,7 @@ namespace ReModHub.Pages
 
         public override ICommand LaunchGameProfileCommand { get; }
 
-        private CancellationTokenSource initializeCancellationTokenSource = new();
+        private bool isInitialized;
 
         public LibraryPageViewModel(
             GameProfileService gameProfileService,
@@ -53,17 +55,23 @@ namespace ReModHub.Pages
 
             LaunchGameProfileCommand = new RelayCommand<GameProfile>(LaunchGameProfileAsync);
 
-            InitializeAsync(initializeCancellationTokenSource.Token).ConfigureAwait(false);
         }
 
-        private async Task InitializeAsync(CancellationToken cancellationToken)
+        public override async Task InitializeAsync(CancellationToken cancellationToken)
         {
+            if (isInitialized)
+            {
+                return;
+            }
+
             await gameManifestService.RefreshGameManifestsAsync(cancellationToken);
             await gameProfileService.RefreshGameProfilesAsync(cancellationToken);
             await modManifestService.RefreshModManifestsAsync(cancellationToken);
 
             RefreshGameProfiles();
             RefreshModManifests();
+
+            isInitialized = true;
         }
 
         private void RefreshGameProfiles()

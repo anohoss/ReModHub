@@ -8,7 +8,9 @@
       xmlns:local="clr-namespace:ReModHub.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="750" d:DesignWidth="1000"
-      Title="ライブラリ">
+      Title="ライブラリ"
+      Loaded="OnLoaded"
+      Unloaded="OnUnloaded">
 
     <Grid Background="{ui:ThemeResource SolidBackgroundFillColorBaseBrush}">
         <Grid.RowDefinitions>
