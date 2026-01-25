@@ -1,7 +1,12 @@
 ﻿namespace ReModHub
 {
-    public class GameManifest
+    public sealed class GameManifest
     {
+        /// <summary>
+        /// 識別番号
+        /// </summary>
+        public string Uuid { get; init; } = string.Empty;
+
         /// <summary>
         /// 表示名
         /// </summary>
@@ -13,22 +18,9 @@
         public string VersionName { get; init; } = string.Empty;
 
         /// <summary>
-        /// 実行ファイル名
+        /// 実行ファイルのパス
         /// </summary>
-        public string ExeFileName { get; init; } = string.Empty;
-
-        public GameManifest(string id, string displayName, string versionName, string exeFileName)
-        {
-            Id = id ?? throw new ArgumentNullException(nameof(id));
-            DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
-            VersionName = versionName ?? throw new ArgumentNullException(nameof(versionName));
-            ExeFileName = exeFileName ?? throw new ArgumentNullException(nameof(exeFileName));
-        }
-
-        /// <summary>
-        /// 識別番号
-        /// </summary>
-        public string Id { get; init; } = string.Empty;
+        public string ExeFilePath { get; init; } = string.Empty;
 
         /// <summary>
         /// GameReferenceを生成する
@@ -37,7 +29,7 @@
         {
             return new GameReference
             {
-                Id = Id
+                Uuid = Uuid
             };
         }
     }
@@ -46,7 +38,7 @@
     {
         public GameReference()
         {
-            Id = string.Empty;
+            Uuid = string.Empty;
         }
 
         // TODO: 識別番号をUUIDなどの一意な形式にする
@@ -54,11 +46,11 @@
         /// <summary>
         /// ゲームの識別番号
         /// </summary>
-        public string Id { get; init; } = string.Empty;
+        public string Uuid { get; init; } = string.Empty;
 
         public bool Equals(GameReference other)
         {
-            return Id == other.Id;
+            return Uuid == other.Uuid;
         }
 
         public override bool Equals(object? obj)
@@ -68,7 +60,7 @@
 
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            return Uuid.GetHashCode();
         }
 
         public static bool operator ==(GameReference left, GameReference right)

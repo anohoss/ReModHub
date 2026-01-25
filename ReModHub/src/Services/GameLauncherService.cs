@@ -52,25 +52,25 @@ namespace ReModHub
 
         public GameProcess? StartGame(GameProfile profile)
         {
-            if (string.IsNullOrEmpty(profile.Id))
+            if (string.IsNullOrEmpty(profile.Uuid))
             {
                 logger.ZLogWarning($"Profile id is empty. Launch is skipped.");
                 return null;
             }
 
-            var existing = TryGetRunningProcess(profile.Id);
+            var existing = TryGetRunningProcess(profile.Uuid);
             if (existing != null)
             {
                 return existing;
             }
 
-            if (!gameManifestService.FindGameManifest(new GameReference { Id = profile.BaseGameId }, out var manifest) || manifest == null)
+            if (!gameManifestService.FindGameManifest(profile.BaseGameReference, out var manifest) || manifest == null)
             {
-                logger.ZLogWarning($"Base game manifest not found for '{profile.BaseGameId}'.");
+                logger.ZLogWarning($"Base game manifest not found for '{profile.BaseGameReference}'.");
                 return null;
             }
 
-            string exePath = Path.Combine(AppPath.GamesDirectoryName, profile.BaseGameId, manifest.ExeFileName);
+            string exePath = manifest.ExeFilePath;
             if (!File.Exists(exePath))
             {
                 logger.ZLogWarning($"Executable not found at '{exePath}'.");
@@ -98,19 +98,19 @@ namespace ReModHub
 
             process.Exited += (_, _) =>
             {
-                runningProcesses.Remove(profile.Id);
+                runningProcesses.Remove(profile.Uuid);
                 process.Dispose();
             };
 
             if (!process.Start())
             {
-                logger.ZLogWarning($"Failed to start process for '{profile.Id}'.");
+                logger.ZLogWarning($"Failed to start process for '{profile.Uuid}'.");
                 process.Dispose();
                 return null;
             }
 
-            var gameProcess = new GameProcess(profile.Id, process);
-            runningProcesses[profile.Id] = gameProcess;
+            var gameProcess = new GameProcess(profile.Uuid, process);
+            runningProcesses[profile.Uuid] = gameProcess;
             return gameProcess;
         }
 
@@ -128,11 +128,11 @@ namespace ReModHub
                 var reference = profile.ModReferences[i];
                 if (!modManifestService.FindModManifest(reference, out var manifest) || manifest == null)
                 {
-                    logger.ZLogWarning($"Mod manifest not found for '{reference.Id}'.");
+                    logger.ZLogWarning($"Mod manifest not found for '{reference.Uuid}'.");
                     continue;
                 }
 
-                string modPath = Path.Combine(AppPath.ModsDirectoryName, reference.Id, manifest.PakFilename);
+                string modPath = manifest.PakFilePath;
                 if (!modPath.EndsWith(".pak", StringComparison.OrdinalIgnoreCase))
                 {
                     logger.ZLogWarning($"Mod file is not a .pak: '{modPath}'.");

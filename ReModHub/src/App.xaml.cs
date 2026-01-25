@@ -45,6 +45,9 @@ namespace ReModHub
                 services.AddSingleton<GameManifestService>();
                 services.AddSingleton<GameProfileService>();
                 services.AddSingleton<GameLauncherService>();
+                services.AddSingleton<ModManifestLoader>();
+                services.AddSingleton<GameManifestLoader>();
+                services.AddSingleton<GameProfileLoader>();
 
                 // Pages
                 services.AddSingleton<HomePage>();

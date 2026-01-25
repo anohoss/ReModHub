@@ -41,15 +41,11 @@
                                 <TextBlock Text="{Binding VersionName}"
                                            Margin="0,4,0,0"
                                            Opacity="0.75"/>
-                                <TextBlock Text="{Binding BaseGameId, StringFormat=Base: {0}}"
+                                <TextBlock Text="{Binding BaseGameReference.Uuid, StringFormat=Base: {0}}"
                                            Margin="0,6,0,0"
                                            FontSize="12"
                                            Opacity="0.7"
                                            TextTrimming="CharacterEllipsis"/>
-                                <TextBlock Text="{Binding ModCount, StringFormat=Mods: {0}}"
-                                           Margin="0,6,0,0"
-                                           FontSize="12"
-                                           Opacity="0.7"/>
                             </StackPanel>
                         </Border>
                     </DataTemplate>
