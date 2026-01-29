@@ -17,6 +17,16 @@ namespace ReModHub.Controls
             typeof(ICommand),
             typeof(GameProfileLibraryControl));
 
+        public static readonly DependencyProperty EditCommandProperty = DependencyProperty.Register(
+            nameof(EditCommand),
+            typeof(ICommand),
+            typeof(GameProfileLibraryControl));
+
+        public static readonly DependencyProperty DeleteCommandProperty = DependencyProperty.Register(
+            nameof(DeleteCommand),
+            typeof(ICommand),
+            typeof(GameProfileLibraryControl));
+
         public IEnumerable ItemsSource
         {
             get => (IEnumerable)GetValue(ItemsSourceProperty);
@@ -29,9 +39,30 @@ namespace ReModHub.Controls
             set => SetValue(LaunchCommandProperty, value);
         }
 
+        public ICommand? EditCommand
+        {
+            get => (ICommand?)GetValue(EditCommandProperty);
+            set => SetValue(EditCommandProperty, value);
+        }
+
+        public ICommand? DeleteCommand
+        {
+            get => (ICommand?)GetValue(DeleteCommandProperty);
+            set => SetValue(DeleteCommandProperty, value);
+        }
+
         public GameProfileLibraryControl()
         {
             InitializeComponent();
+        }
+
+        private void OnMenuClicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.ContextMenu != null)
+            {
+                button.ContextMenu.PlacementTarget = button;
+                button.ContextMenu.IsOpen = true;
+            }
         }
     }
 }

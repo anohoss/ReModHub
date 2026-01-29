@@ -47,6 +47,7 @@ namespace ReModHub
             var modReferences = manifestObject.ModReferences ?? [];
             return new GameProfile
             {
+                ManifestFilePath = manifestFilePath,
                 Uuid = manifestObject.Uuid,
                 DisplayName = manifestObject.DisplayName,
                 VersionName = manifestObject.VersionName,

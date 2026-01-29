@@ -20,15 +20,30 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Games"
-                   Margin="12,12,12,6"
-                   FontSize="18"
-                   FontWeight="SemiBold"
-                   Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
+        <Grid Margin="12,12,12,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Games"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"
+                       Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"/>
+            <Button Grid.Column="1"
+                    Content="新規プロファイル"
+                    MinWidth="120"
+                    Padding="12,4"
+                    HorizontalAlignment="Right"
+                    Command="{Binding CreateGameProfileCommand}"/>
+        </Grid>
         <controls:GameProfileLibraryControl Grid.Row="1"
                                             Margin="8,0,8,8"
                                             ItemsSource="{Binding GameProfiles}"
-                                            LaunchCommand="{Binding LaunchGameProfileCommand}"/>
+                                            LaunchCommand="{Binding LaunchGameProfileCommand}"
+                                            EditCommand="{Binding EditGameProfileCommand}"
+                                            DeleteCommand="{Binding DeleteGameProfileCommand}"/>
 
         <TextBlock Text="MOD"
                    Grid.Row="2"

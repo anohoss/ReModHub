@@ -1,0 +1,56 @@
+<ui:FluentWindow x:Class="ReModHub.Windows.NewGameProfileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:local="clr-namespace:ReModHub.Windows"
+        mc:Ignorable="d"
+        Title="新規プロファイル"
+        WindowStartupLocation="CenterOwner"
+        SizeToContent="WidthAndHeight"
+        ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="Auto"
+        MinWidth="440"
+        Background="{ui:ThemeResource ApplicationBackgroundBrush}"
+        Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}">
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.RowSpan="5"
+                     ShowMinimize="False"
+                     ShowMaximize="False"
+                     ShowClose="True"/>
+
+        <TextBlock Text="表示名"
+                   FontWeight="SemiBold"/>
+        <TextBox Grid.Row="1"
+                 Margin="0,6,0,12"
+                 Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <TextBlock Grid.Row="2"
+                   Text="ベースゲーム"
+                   FontWeight="SemiBold"/>
+        <ComboBox Grid.Row="3"
+                  Margin="0,6,0,12"
+                  ItemsSource="{Binding BaseGameOptions}"
+                  SelectedItem="{Binding SelectedBaseGameOption}"
+                  DisplayMemberPath="DisplayText"/>
+
+        <StackPanel Grid.Row="4"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Content="作成"
+                    MinWidth="90"
+                    IsDefault="True"
+                    Click="OnSaveClicked"/>
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>

@@ -35,7 +35,7 @@
                                 <TextBlock Text="{Binding VersionName}"
                                            Margin="0,4,0,0"
                                            Opacity="0.75"/>
-                                <TextBlock Text="{Binding PakFileName}"
+                                <TextBlock Text="{Binding PakFilePath}"
                                            Margin="0,6,0,0"
                                            FontSize="12"
                                            Opacity="0.7"

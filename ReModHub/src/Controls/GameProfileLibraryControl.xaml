@@ -32,21 +32,55 @@
                                               Command="{Binding LaunchCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:GameProfileLibraryControl}}"
                                               CommandParameter="{Binding}" />
                             </Border.InputBindings>
-                            <StackPanel>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
                                 <TextBlock Text="{Binding DisplayName}"
                                            FontSize="14"
                                            FontWeight="SemiBold"
                                            Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
                                            TextTrimming="CharacterEllipsis"/>
-                                <TextBlock Text="{Binding VersionName}"
+                                <Button Grid.Column="1"
+                                        Padding="4,0"
+                                        Margin="6,-2,0,0"
+                                        VerticalAlignment="Top"
+                                        FontSize="16"
+                                        Content="..."
+                                        Tag="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:GameProfileLibraryControl}}"
+                                        Click="OnMenuClicked">
+                                    <Button.ContextMenu>
+                                        <ContextMenu DataContext="{Binding PlacementTarget, RelativeSource={RelativeSource Self}}">
+                                            <MenuItem Header="編集"
+                                                      Command="{Binding Tag.EditCommand}"
+                                                      CommandParameter="{Binding DataContext}"/>
+                                            <MenuItem Header="削除"
+                                                      Command="{Binding Tag.DeleteCommand}"
+                                                      CommandParameter="{Binding DataContext}"/>
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
+                                </Button>
+
+                                <TextBlock Grid.Row="1"
+                                           Grid.ColumnSpan="2"
+                                           Text="{Binding VersionName}"
                                            Margin="0,4,0,0"
                                            Opacity="0.75"/>
-                                <TextBlock Text="{Binding BaseGameReference.Uuid, StringFormat=Base: {0}}"
+                                <TextBlock Grid.Row="2"
+                                           Grid.ColumnSpan="2"
+                                           Text="{Binding BaseGameReference.Uuid, StringFormat=Base: {0}}"
                                            Margin="0,6,0,0"
                                            FontSize="12"
                                            Opacity="0.7"
                                            TextTrimming="CharacterEllipsis"/>
-                            </StackPanel>
+                            </Grid>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
