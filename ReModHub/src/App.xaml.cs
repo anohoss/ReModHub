@@ -41,13 +41,10 @@ namespace ReModHub
                 services.AddNavigationViewPageProvider();
                 services.AddSingleton<Wpf.Ui.INavigationService, Wpf.Ui.NavigationService>();
 
-                services.AddSingleton<ModManifestService>();
-                services.AddSingleton<GameManifestService>();
-                services.AddSingleton<GameProfileService>();
-                services.AddSingleton<GameLauncherService>();
-                services.AddSingleton<ModManifestLoader>();
-                services.AddSingleton<GameManifestLoader>();
-                services.AddSingleton<GameProfileLoader>();
+                services.AddSingleton<IGameManifestRepository, GameManifestJsonRepository>();
+                services.AddSingleton<IModManifestRepository, ModManifestJsonRepository>();
+                services.AddSingleton<IGameProfileRepository, GameProfileJsonRepository>();
+                services.AddSingleton<IGameLauncherService, GameLauncherService>();
 
                 // Pages
                 services.AddSingleton<HomePage>();

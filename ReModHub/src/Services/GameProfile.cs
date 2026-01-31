@@ -15,14 +15,16 @@ namespace ReModHub
         public IReadOnlyList<ModReference> ModReferences { get; init; } = [];
 
         /// <summary>
-        /// GameReference‚ğ¶¬‚·‚é
+        /// GameReferenceã‚’ç”Ÿæˆã™ã‚‹
         /// </summary>
         public GameReference ToReference()
         {
             return new GameReference
             {
-                Uuid = Uuid
+                Uuid = Uuid,
             };
         }
     }
 }
+
+

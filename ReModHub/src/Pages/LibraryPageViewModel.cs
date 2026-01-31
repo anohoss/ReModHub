@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using ReModHub.Commands;
-using System.Threading;
-using System.Threading.Tasks;
 using ReModHub.Windows;
 
 namespace ReModHub.Pages
@@ -36,13 +32,12 @@ namespace ReModHub.Pages
     /// </summary>
     internal class LibraryPageViewModel : LibraryPageViewModelBase, INotifyPropertyChanged
     {
-        private readonly GameProfileService gameProfileService;
-        private readonly GameManifestService gameManifestService;
-        private readonly GameLauncherService gameLauncherService;
+        private readonly IGameProfileRepository gameProfileRepository;
+        private readonly IGameManifestRepository gameManifestRepository;
+        private readonly IModManifestRepository modManifestRepository;
+        private readonly IGameLauncherService gameLauncherService;
 
         public override ObservableCollection<GameProfile> GameProfiles { get; } = [];
-
-        private readonly ModManifestService modManifestService;
 
         public override ObservableCollection<ModManifest> ModManifests { get; } = [];
 
@@ -57,14 +52,14 @@ namespace ReModHub.Pages
         private bool isInitialized;
 
         public LibraryPageViewModel(
-            GameProfileService gameProfileService,
-            GameManifestService gameManifestService,
-            ModManifestService modManifestService,
-            GameLauncherService gameLauncherService)
+            IGameProfileRepository gameProfileRepository,
+            IGameManifestRepository gameManifestRepository,
+            IModManifestRepository modManifestRepository,
+            IGameLauncherService gameLauncherService)
         {
-            this.gameProfileService = gameProfileService ?? throw new ArgumentNullException(nameof(gameProfileService));
-            this.gameManifestService = gameManifestService ?? throw new ArgumentNullException(nameof(gameManifestService));
-            this.modManifestService = modManifestService ?? throw new ArgumentNullException(nameof(modManifestService));
+            this.gameProfileRepository = gameProfileRepository ?? throw new ArgumentNullException(nameof(gameProfileRepository));
+            this.gameManifestRepository = gameManifestRepository ?? throw new ArgumentNullException(nameof(gameManifestRepository));
+            this.modManifestRepository = modManifestRepository ?? throw new ArgumentNullException(nameof(modManifestRepository));
             this.gameLauncherService = gameLauncherService ?? throw new ArgumentNullException(nameof(gameLauncherService));
 
             LaunchGameProfileCommand = new RelayCommand<GameProfile>(LaunchGameProfileAsync);
@@ -81,9 +76,9 @@ namespace ReModHub.Pages
                 return;
             }
 
-            await gameManifestService.RefreshGameManifestsAsync(cancellationToken);
-            await gameProfileService.RefreshGameProfilesAsync(cancellationToken);
-            await modManifestService.RefreshModManifestsAsync(cancellationToken);
+            await gameManifestRepository.RefreshAsync(cancellationToken);
+            await gameProfileRepository.RefreshAsync(cancellationToken);
+            await modManifestRepository.RefreshAsync(cancellationToken);
 
             RefreshGameProfiles();
             RefreshModManifests();
@@ -96,7 +91,7 @@ namespace ReModHub.Pages
             GameProfiles.Clear();
 
             var cachedProfiles = new List<GameProfile>();
-            gameProfileService.PopulateGameProfiles(cachedProfiles);
+            gameProfileRepository.PopulateGameProfiles(cachedProfiles);
 
             foreach (var profile in cachedProfiles)
             {
@@ -111,7 +106,7 @@ namespace ReModHub.Pages
             ModManifests.Clear();
 
             var cachedManifests = new List<ModManifest>();
-            modManifestService.PopulateModManifests(cachedManifests);
+            modManifestRepository.PopulateModManifests(cachedManifests);
 
             foreach (var manifest in cachedManifests)
             {
@@ -151,7 +146,7 @@ namespace ReModHub.Pages
                 return;
             }
 
-            var savedProfile = await gameProfileService.SaveGameProfileAsync(window.UpdatedProfile, CancellationToken.None);
+            var savedProfile = await gameProfileRepository.SaveAsync(window.UpdatedProfile, CancellationToken.None);
             if (savedProfile == null)
             {
                 return;
@@ -163,17 +158,20 @@ namespace ReModHub.Pages
         private async Task CreateGameProfileAsync()
         {
             var manifests = new List<GameManifest>();
-            gameManifestService.PopulateGameManifests(manifests, _ => true);
+            gameManifestRepository.PopulateGameManifests(manifests, _ => true);
 
             var profiles = new List<GameProfile>();
-            gameProfileService.PopulateGameProfiles(profiles);
+            gameProfileRepository.PopulateGameProfiles(profiles);
+
+            var modManifests = new List<ModManifest>();
+            modManifestRepository.PopulateModManifests(modManifests);
 
             if (manifests.Count == 0 && profiles.Count == 0)
             {
                 return;
             }
 
-            var window = new NewGameProfileWindow(manifests, profiles)
+            var window = new NewGameProfileWindow(manifests, profiles, modManifests)
             {
                 Owner = Application.Current.MainWindow
             };
@@ -184,7 +182,7 @@ namespace ReModHub.Pages
                 return;
             }
 
-            var savedProfile = await gameProfileService.SaveGameProfileAsync(window.CreatedProfile, CancellationToken.None);
+            var savedProfile = await gameProfileRepository.SaveAsync(window.CreatedProfile, CancellationToken.None);
             if (savedProfile == null)
             {
                 return;
@@ -200,23 +198,13 @@ namespace ReModHub.Pages
                 return;
             }
 
-            bool deleted = await gameProfileService.DeleteGameProfileAsync(profile, CancellationToken.None);
+            bool deleted = await gameProfileRepository.DeleteAsync(profile, CancellationToken.None);
             if (!deleted)
             {
                 return;
             }
 
             RemoveProfileFromCollection(profile);
-        }
-
-        private string ResolveBaseGameDisplay(GameProfile profile)
-        {
-            if (gameManifestService.FindGameManifest(profile.BaseGameReference, out var manifest) && manifest != null)
-            {
-                return $"{manifest.DisplayName} ({manifest.Uuid})";
-            }
-
-            return profile.BaseGameReference.Uuid;
         }
 
         private void ReplaceProfileInCollection(GameProfile profile)
@@ -243,6 +231,30 @@ namespace ReModHub.Pages
                     return;
                 }
             }
+        }
+
+        private string ResolveBaseGameDisplay(GameProfile profile)
+        {
+            var reference = profile.BaseGameReference;
+            if (gameProfileRepository.FindGameProfile(reference, out var baseProfile)
+                && baseProfile != null)
+            {
+                var versionLabel = string.IsNullOrWhiteSpace(baseProfile.VersionName)
+                    ? baseProfile.Uuid
+                    : baseProfile.VersionName;
+                return $"{baseProfile.DisplayName} (v{versionLabel})";
+            }
+
+            if (gameManifestRepository.FindGameManifest(reference, out var manifest)
+                && manifest != null)
+            {
+                var versionLabel = string.IsNullOrWhiteSpace(manifest.VersionName)
+                    ? manifest.Uuid
+                    : manifest.VersionName;
+                return $"{manifest.DisplayName} (v{versionLabel})";
+            }
+
+            return reference.Uuid;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

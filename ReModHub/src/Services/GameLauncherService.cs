@@ -5,21 +5,24 @@ using ZLogger;
 
 namespace ReModHub
 {
-    internal class GameLauncherService
+    internal sealed class GameLauncherService : IGameLauncherService
     {
         private readonly ILogger<GameLauncherService> logger;
-        private readonly GameManifestService gameManifestService;
-        private readonly ModManifestService modManifestService;
+        private readonly IGameManifestRepository gameManifestRepository;
+        private readonly IGameProfileRepository gameProfileRepository;
+        private readonly IModManifestRepository modManifestRepository;
         private readonly Dictionary<string, GameProcess> runningProcesses = [];
 
         public GameLauncherService(
             ILogger<GameLauncherService> logger,
-            GameManifestService gameManifestService,
-            ModManifestService modManifestService)
+            IGameManifestRepository gameManifestRepository,
+            IGameProfileRepository gameProfileRepository,
+            IModManifestRepository modManifestRepository)
         {
             this.logger = logger;
-            this.gameManifestService = gameManifestService;
-            this.modManifestService = modManifestService;
+            this.gameManifestRepository = gameManifestRepository;
+            this.gameProfileRepository = gameProfileRepository;
+            this.modManifestRepository = modManifestRepository;
         }
 
         public GameProcess? TryGetRunningProcess(string profileId)
@@ -64,7 +67,7 @@ namespace ReModHub
                 return existing;
             }
 
-            if (!gameManifestService.FindGameManifest(profile.BaseGameReference, out var manifest) || manifest == null)
+            if (!TryResolveBaseManifest(profile.BaseGameReference, out var manifest) || manifest == null)
             {
                 logger.ZLogWarning($"Base game manifest not found for '{profile.BaseGameReference}'.");
                 return null;
@@ -114,6 +117,37 @@ namespace ReModHub
             return gameProcess;
         }
 
+        private bool TryResolveBaseManifest(GameReference reference, out GameManifest? manifest)
+        {
+            var visited = new HashSet<GameReference>();
+            return TryResolveBaseManifest(reference, visited, out manifest);
+        }
+
+        private bool TryResolveBaseManifest(
+            GameReference reference,
+            HashSet<GameReference> visited,
+            out GameManifest? manifest)
+        {
+            manifest = null;
+            if (string.IsNullOrWhiteSpace(reference.Uuid))
+            {
+                return false;
+            }
+
+            if (!visited.Add(reference))
+            {
+                logger.ZLogWarning($"Base game reference loop detected at '{reference}'.");
+                return false;
+            }
+
+            if (gameProfileRepository.FindGameProfile(reference, out var profile) && profile != null)
+            {
+                return TryResolveBaseManifest(profile.BaseGameReference, visited, out manifest);
+            }
+
+            return gameManifestRepository.FindGameManifest(reference, out manifest) && manifest != null;
+        }
+
         private string? BuildModArgument(GameProfile profile)
         {
             if (profile.ModReferences.Count == 0)
@@ -126,7 +160,7 @@ namespace ReModHub
             for (int i = 0; i < profile.ModReferences.Count; i++)
             {
                 var reference = profile.ModReferences[i];
-                if (!modManifestService.FindModManifest(reference, out var manifest) || manifest == null)
+                if (!modManifestRepository.FindModManifest(reference, out var manifest) || manifest == null)
                 {
                     logger.ZLogWarning($"Mod manifest not found for '{reference.Uuid}'.");
                     continue;

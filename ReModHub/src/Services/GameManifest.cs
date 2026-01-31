@@ -29,7 +29,7 @@
         {
             return new GameReference
             {
-                Uuid = Uuid
+                Uuid = Uuid,
             };
         }
     }
@@ -60,7 +60,12 @@
 
         public override int GetHashCode()
         {
-            return Uuid.GetHashCode();
+            return HashCode.Combine(Uuid);
+        }
+
+        public override string ToString()
+        {
+            return Uuid;
         }
 
         public static bool operator ==(GameReference left, GameReference right)

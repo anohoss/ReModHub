@@ -1,37 +1,35 @@
-using System.Collections;
-using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace ReModHub.Controls
 {
-    public partial class GameProfileLibraryControl : UserControl
+    public partial class GameProfileCardControl : UserControl
     {
-        public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register(
-            nameof(ItemsSource),
-            typeof(IEnumerable),
-            typeof(GameProfileLibraryControl));
+        public static readonly DependencyProperty ProfileProperty = DependencyProperty.Register(
+            nameof(Profile),
+            typeof(GameProfile),
+            typeof(GameProfileCardControl));
 
         public static readonly DependencyProperty LaunchCommandProperty = DependencyProperty.Register(
             nameof(LaunchCommand),
             typeof(ICommand),
-            typeof(GameProfileLibraryControl));
+            typeof(GameProfileCardControl));
 
         public static readonly DependencyProperty EditCommandProperty = DependencyProperty.Register(
             nameof(EditCommand),
             typeof(ICommand),
-            typeof(GameProfileLibraryControl));
+            typeof(GameProfileCardControl));
 
         public static readonly DependencyProperty DeleteCommandProperty = DependencyProperty.Register(
             nameof(DeleteCommand),
             typeof(ICommand),
-            typeof(GameProfileLibraryControl));
+            typeof(GameProfileCardControl));
 
-        public IEnumerable ItemsSource
+        public GameProfile? Profile
         {
-            get => (IEnumerable)GetValue(ItemsSourceProperty);
-            set => SetValue(ItemsSourceProperty, value);
+            get => (GameProfile?)GetValue(ProfileProperty);
+            set => SetValue(ProfileProperty, value);
         }
 
         public ICommand? LaunchCommand
@@ -52,9 +50,18 @@ namespace ReModHub.Controls
             set => SetValue(DeleteCommandProperty, value);
         }
 
-        public GameProfileLibraryControl()
+        public GameProfileCardControl()
         {
             InitializeComponent();
+        }
+
+        private void OnMenuClicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.ContextMenu != null)
+            {
+                button.ContextMenu.PlacementTarget = button;
+                button.ContextMenu.IsOpen = true;
+            }
         }
     }
 }

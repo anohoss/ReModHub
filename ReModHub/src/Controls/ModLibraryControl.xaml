@@ -20,32 +20,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Width="240"
-                                Margin="6"
-                                Padding="10"
-                                CornerRadius="8"
-                                Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1">
-                            <StackPanel>
-                                <TextBlock Text="{Binding DisplayName}"
-                                           FontSize="14"
-                                           FontWeight="SemiBold"
-                                           TextTrimming="CharacterEllipsis"/>
-                                <TextBlock Text="{Binding VersionName}"
-                                           Margin="0,4,0,0"
-                                           Opacity="0.75"/>
-                                <TextBlock Text="{Binding PakFilePath}"
-                                           Margin="0,6,0,0"
-                                           FontSize="12"
-                                           Opacity="0.7"
-                                           TextTrimming="CharacterEllipsis"/>
-                                <TextBlock Text="{Binding DependentMods.Count, StringFormat=Depends: {0}}"
-                                           Margin="0,6,0,0"
-                                           FontSize="12"
-                                           Opacity="0.7"/>
-                            </StackPanel>
-                        </Border>
+                        <local:ModManifestCardControl Manifest="{Binding}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
